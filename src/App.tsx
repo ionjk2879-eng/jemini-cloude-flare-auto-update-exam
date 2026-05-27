@@ -24,7 +24,7 @@ function App() {
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
               <Code2 size={20} className="text-white" />
             </div>
-            <span>DevCloud <span className="text-blue-500">Lab</span></span>
+            <span>디클라우디 <span className="text-blue-500">랩</span></span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <a href="#" className="hover:text-white transition-colors">커뮤니티</a>
@@ -149,7 +149,7 @@ function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-2 font-bold text-lg opacity-50">
             <Code2 size={24} />
-            <span>DevCloud Lab</span>
+            <span>디클라우디 랩</span>
           </div>
           <div className="flex gap-8 text-sm text-slate-500">
             <a href="#" className="hover:text-white transition-colors">이용약관</a>
