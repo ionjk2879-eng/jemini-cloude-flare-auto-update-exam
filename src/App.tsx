@@ -4,11 +4,9 @@ import {
   BookOpen, 
   Users, 
   MessageSquare, 
-  ChevronRight, 
   Info, 
   Truck, 
   Zap,
-  Globe,
   Search,
   Camera
 } from 'lucide-react';
