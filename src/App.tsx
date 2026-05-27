@@ -4,7 +4,6 @@ import {
   BookOpen, 
   Users, 
   MessageSquare, 
-  Info, 
   Truck, 
   Zap,
   Search,
