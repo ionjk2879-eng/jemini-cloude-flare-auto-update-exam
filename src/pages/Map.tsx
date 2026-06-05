@@ -35,36 +35,50 @@ const locations: Location[] = [
   { id: 2, name: "역삼1동 주민센터", address: "서울 강남구 역삼로7길 16", type: "스티커/신고", lat: 37.4950, lng: 127.0330, city: "서울", category: 'office', desc: "관내 대형 폐기물 배출 신고 및 편의점 판매 안내" },
   { id: 3, name: "삼성동 수거함", address: "서울 강남구 삼성동 16-1", type: "소형가전 전용", lat: 37.5140, lng: 127.0560, city: "서울", category: 'small', desc: "5개 미만 소형 가전 상시 무료 배출 가능" },
   { id: 4, name: "강남구 재활용센터", address: "서울 강남구 봉은사로 401", type: "대형 재활용", lat: 37.5110, lng: 127.0460, city: "서울", category: 'recycle', desc: "가구/가전 기증 및 매입 상담 가능" },
-  { id: 5, name: "송파구청", address: "서울 송파구 올림픽로 326", type: "스티커/신고", lat: 37.5145, lng: 127.1058, city: "서울", category: 'office', desc: "스티커 판매소 위치 확인 가능" },
+  { id: 5, name: "송파구청", address: "서울 송파구 올림픽로 326", type: "스티커/신고", lat: 37.5145, lng: 127.1058, city: "서울", category: 'office', desc: "송파구 관내 대형 폐기물 스티커 판매소 안내" },
+  { id: 30, name: "잠실본동 주민센터", address: "서울 송파구 백제고분로15길 11", type: "스티커/신고", lat: 37.5050, lng: 127.0820, city: "서울", category: 'office', desc: "주민센터 내 폐기물 신고 창구 운영" },
+  { id: 31, name: "송파구 재활용센터", address: "서울 송파구 거마로 74", type: "대형 재활용", lat: 37.4950, lng: 127.1450, city: "서울", category: 'recycle', desc: "중고 가구 수거 및 리사이클 전문" },
   
-  // 대전 (확장 데이터)
+  // 대전
   { id: 7, name: "대전광역시청", address: "대전 서구 둔산로 100", type: "종합 민원", lat: 36.3504, lng: 127.3845, city: "대전", category: 'office', desc: "대전 전역 배출 종합 안내" },
   { id: 8, name: "서구청 (대전)", address: "대전 서구 둔산서로 100", type: "스티커/신고", lat: 36.3467, lng: 127.3789, city: "대전", category: 'office', desc: "서구 관내 대형 폐기물 처리 거점" },
   { id: 9, name: "유성구청", address: "대전 유성구 대학로 211", type: "스티커/신고", lat: 36.3622, lng: 127.3563, city: "대전", category: 'office', desc: "유성구 전역 배출 신고 접수" },
   { id: 20, name: "중구청 (대전)", address: "대전 중구 중앙로 100", type: "스티커/신고", lat: 36.3248, lng: 127.4232, city: "대전", category: 'office', desc: "원도심 대형 폐기물 행정 처리" },
   { id: 21, name: "동구청 (대전)", address: "대전 동구 동구청로 147", type: "스티커/신고", lat: 36.3339, lng: 127.4522, city: "대전", category: 'office', desc: "동구 지역 폐기물 스티커 판매" },
-  
   { id: 22, name: "둔산1동 수거함", address: "대전 서구 둔산로 155", type: "소형가전 전용", lat: 36.3520, lng: 127.3950, city: "대전", category: 'small', desc: "주민센터 내 소형가전 무상 수거함" },
   { id: 23, name: "궁동 소형 수거함", address: "대전 유성구 궁동 412", type: "소형가전 전용", lat: 36.3615, lng: 127.3480, city: "대전", category: 'small', desc: "대학가 인근 소형 가전 전용 배출처" },
   { id: 24, name: "노은동 수거거점", address: "대전 유성구 노은동 547", type: "소형가전 전용", lat: 36.3720, lng: 127.3180, city: "대전", category: 'small', desc: "노은지구 상시 무상 배출 가능" },
   { id: 25, name: "가양동 소형 수거함", address: "대전 동구 가양동 435", type: "소형가전 전용", lat: 36.3450, lng: 127.4420, city: "대전", category: 'small', desc: "동구 주택가 밀집 지역 수거함" },
-  
   { id: 10, name: "서구 재활용센터", address: "대전 서구 문정로 48", type: "대형 재활용", lat: 36.3480, lng: 127.3910, city: "대전", category: 'recycle', desc: "중고 가구 수거 및 폐기 상담" },
   { id: 26, name: "유성구 재활용센터", address: "대전 유성구 현충원로 347", type: "대형 재활용", lat: 36.3580, lng: 127.2950, city: "대전", category: 'recycle', desc: "유성구 지정 대형 폐기물 재활용 거점" },
   { id: 27, name: "대덕구 재활용센터", address: "대전 대덕구 대화로 101", type: "대형 재활용", lat: 36.3650, lng: 127.4120, city: "대전", category: 'recycle', desc: "산업단지 인근 대형 품목 전문 처리" },
 
   // 부산
   { id: 11, name: "부산광역시청", address: "부산 연제구 중앙대로 1001", type: "스티커/신고", lat: 35.1795, lng: 129.0756, city: "부산", category: 'office', desc: "부산시 자원순환과 통합 안내" },
-  { id: 12, name: "해운대구청", address: "부산 해운대구 중동 1로 1", type: "스티커/신고", lat: 35.1631, lng: 129.1636, city: "부산", category: 'office', desc: "관광 특구 내 대형 폐기물 신속 처리 신고" },
+  { id: 12, name: "해운대구청", address: "부산 해운대구 중동 1로 1", type: "스티커/신고", lat: 35.1631, lng: 129.1636, city: "부산", category: 'office', desc: "해운대구 대형 폐기물 스마트 신고 지원" },
+  { id: 32, name: "진구청 (부산)", address: "부산 부산진구 시민공원로 30", type: "스티커/신고", lat: 35.1620, lng: 129.0530, city: "부산", category: 'office', desc: "부산진구 관내 폐기물 배출 상담" },
+  { id: 33, name: "서면 소형 수거함", address: "부산 부산진구 부전동 516-43", type: "소형가전 전용", lat: 35.1580, lng: 129.0600, city: "부산", category: 'small', desc: "유동인구 밀집지역 소형가전 상시 수거" },
   { id: 13, name: "부산 재활용은행", address: "부산 동구 중앙대로 263", type: "대형 재활용", lat: 35.1205, lng: 129.0430, city: "부산", category: 'recycle', desc: "부산 최대 규모 중고 가구/가전 거점" },
+  { id: 34, name: "금정구 재활용센터", address: "부산 금정구 중앙대로 1877", type: "대형 재활용", lat: 35.2430, lng: 129.0920, city: "부산", category: 'recycle', desc: "금정구 지역 대형 품목 수거 전문" },
   
   // 대구
   { id: 14, name: "대구광역시청", address: "대구 중구 공평로 88", type: "스티커/신고", lat: 35.8711, lng: 128.6014, city: "대구", category: 'office', desc: "대구시 대형 폐기물 수수료 확인 및 신고" },
-  { id: 15, name: "수성구청 수거함", address: "대구 수성구 달구벌대로 2450", type: "소형가전 전용", lat: 35.8584, lng: 128.6300, city: "대구", category: 'small', desc: "수성구 지정 소형 가전 상시 배출" },
+  { id: 15, name: "수성구청", address: "대구 수성구 달구벌대로 2450", type: "스티커/신고", lat: 35.8584, lng: 128.6300, city: "대구", category: 'office', desc: "수성구 관내 폐기물 행정 서비스" },
+  { id: 35, name: "달서구청", address: "대구 달서구 학산로 45", type: "스티커/신고", lat: 35.8290, lng: 128.5320, city: "대구", category: 'office', desc: "달서구 대형 폐기물 스티커 구매 안내" },
+  { id: 36, name: "대구 재활용센터", address: "대구 서구 국채보상로 156", type: "대형 재활용", lat: 35.8720, lng: 128.5450, city: "대구", category: 'recycle', desc: "대구 서부권 대형 품목 재활용 거점" },
+  { id: 37, name: "동대구역 수거함", address: "대구 동구 동대구로 550", type: "소형가전 전용", lat: 35.8770, lng: 128.6280, city: "대구", category: 'small', desc: "역세권 소형 가전 무상 배출처" },
 
   // 광주
   { id: 16, name: "광주광역시청", address: "광주 서구 내방로 111", type: "스티커/신고", lat: 35.1601, lng: 126.8514, city: "광주", category: 'office', desc: "광주시 자원순환 통합 안내" },
+  { id: 38, name: "북구청 (광주)", address: "광주 북구 설죽로 249", type: "스티커/신고", lat: 35.1740, lng: 126.9120, city: "광주", category: 'office', desc: "북구 관내 대형 폐기물 배출 신고" },
   { id: 17, name: "광산구 재활용센터", address: "광주 광산구 사암로 340", type: "대형 재활용", lat: 35.1750, lng: 126.8120, city: "광주", category: 'recycle', desc: "호남권 대형 가구/가전 재활용 거점" },
+  { id: 39, name: "상무지구 수거함", address: "광주 서구 상무번영로 47", type: "소형가전 전용", lat: 35.1520, lng: 126.8480, city: "광주", category: 'small', desc: "상무지구 중심가 소형가전 무상 수거" },
+
+  // 인천
+  { id: 40, name: "인천광역시청", address: "인천 남동구 정각로 29", type: "스티커/신고", lat: 37.4560, lng: 126.7050, city: "인천", category: 'office', desc: "인천시 전역 배출 정책 및 안내" },
+  { id: 41, name: "연수구청", address: "인천 연수구 원인재로 115", type: "스티커/신고", lat: 37.4090, lng: 126.6780, city: "인천", category: 'office', desc: "송도 및 연수 지역 폐기물 신고 거점" },
+  { id: 42, name: "인천 재활용센터", address: "인천 미추홀구 경인로 212", type: "대형 재활용", lat: 37.4650, lng: 126.6650, city: "인천", category: 'recycle', desc: "인천권 대형 중고 가구/가전 취급" },
+  { id: 43, name: "부평역 수거함", address: "인천 부평구 광장로 16", type: "소형가전 전용", lat: 37.4890, lng: 126.7240, city: "인천", category: 'small', desc: "부평역 인근 소형 가전 전용 수거 거점" },
 ];
 
 function Map() {
@@ -110,13 +124,13 @@ function Map() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <h1 className="text-4xl font-black mb-4">전국 수거 거점 지도</h1>
-              <p className="text-slate-400">구글 지도를 통해 대전 전역 및 전국 주요 장소를 확인하세요.</p>
+              <p className="text-slate-400">전국 광역시별 동사무소, 수거함, 재활용센터를 확인하세요.</p>
             </div>
             <div className="relative w-full md:w-96">
               <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-blue-500' : 'text-slate-500'}`} size={18} />
               <input 
                 type="text" 
-                placeholder="동네 이름 검색 (예: 둔산동, 유성, 강남)"
+                placeholder="지역명 또는 장소 검색 (예: 부산, 광주, 둔산동)"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-blue-500/50 transition-all focus:bg-white/10"
                 value={searchQuery}
                 onChange={(e) => {
@@ -252,7 +266,7 @@ function Map() {
                   </div>
                 </div>
                 <div className="flex items-start gap-5">
-                  <div className="w-14 h-14 bg-green-600/20 text-green-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-green-500/10"><Smartphone size={28} /></div>
+                  <div className="w-14 h-14 bg-green-600/20 text-green-400 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-green-500/10"><Smartphone size={28} /></div>
                   <div>
                     <h4 className="font-bold text-xl text-white mb-2">전용 앱 (빼기 / 여기로)</h4>
                     <p className="text-sm text-slate-400 leading-relaxed">사진만 찍어 올리면 결제부터 수거 예약까지 스마트폰으로 간편하게 해결됩니다.</p>
