@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   MapPin, 
   Navigation,
@@ -7,9 +7,12 @@ import {
   Recycle,
   Search,
   ExternalLink,
-  Locate,
   CheckCircle2,
-  Map as MapIcon
+  X,
+  Calendar,
+  Store,
+  Smartphone,
+  CreditCard
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -19,340 +22,260 @@ interface Location {
   name: string;
   address: string;
   type: string;
-  distance: string;
-  status: string;
   lat: number;
   lng: number;
-  city: '서울' | '대전';
+  city: string;
+  category: 'office' | 'small' | 'recycle';
+  desc: string;
 }
 
 const locations: Location[] = [
-  // 서울 지역
-  {
-    id: 1,
-    name: "강남구청 주민센터",
-    address: "서울특별시 강남구 학동로 426",
-    type: "폐가전/대형폐기물",
-    distance: "0.8km",
-    status: "운영중",
-    lat: 37.5173,
-    lng: 127.0474,
-    city: '서울'
-  },
-  {
-    id: 2,
-    name: "논현1동 사전 수거함",
-    address: "서울특별시 강남구 학동로 168",
-    type: "소형가전 전용",
-    distance: "1.2km",
-    status: "운영중",
-    lat: 37.5115,
-    lng: 127.0285,
-    city: '서울'
-  },
-  {
-    id: 3,
-    name: "삼성동 재활용 센터",
-    address: "서울특별시 강남구 봉은사로 401",
-    type: "대형가전/가구",
-    distance: "2.5km",
-    status: "운영중",
-    lat: 37.5110,
-    lng: 127.0460,
-    city: '서울'
-  },
-  {
-    id: 4,
-    name: "서초2동 주민센터",
-    address: "서울특별시 서초구 서초대로 314",
-    type: "폐가전/대형폐기물",
-    distance: "3.1km",
-    status: "운영중",
-    lat: 37.4925,
-    lng: 127.0250,
-    city: '서울'
-  },
-  // 대전 지역
-  {
-    id: 6,
-    name: "대전광역시청",
-    address: "대전광역시 서구 둔산로 100",
-    type: "폐가전/대형폐기물",
-    distance: "0.5km",
-    status: "운영중",
-    lat: 36.3504,
-    lng: 127.3845,
-    city: '대전'
-  },
-  {
-    id: 7,
-    name: "유성구청 수거함",
-    address: "대전광역시 유성구 대학로 211",
-    type: "소형가전 전용",
-    distance: "1.8km",
-    status: "운영중",
-    lat: 36.3622,
-    lng: 127.3563,
-    city: '대전'
-  },
-  {
-    id: 8,
-    name: "둔산동 재활용 센터",
-    address: "대전광역시 서구 문정로 48",
-    type: "대형가전/가구",
-    distance: "1.2km",
-    status: "운영중",
-    lat: 36.3480,
-    lng: 127.3910,
-    city: '대전'
-  },
-  {
-    id: 9,
-    name: "대전 중구청",
-    address: "대전광역시 중구 중앙로 100",
-    type: "폐가전/대형폐기물",
-    distance: "2.5km",
-    status: "운영중",
-    lat: 36.3248,
-    lng: 127.4232,
-    city: '대전'
-  }
-];
+  // 서울
+  { id: 1, name: "강남구청", address: "서울 강남구 학동로 426", type: "스티커/신고", lat: 37.5173, lng: 127.0474, city: "서울", category: 'office', desc: "스티커 구매 및 온라인/앱(빼기) 신고 가능" },
+  { id: 2, name: "역삼1동 주민센터", address: "서울 강남구 역삼로7길 16", type: "스티커/신고", lat: 37.4950, lng: 127.0330, city: "서울", category: 'office', desc: "관내 대형 폐기물 배출 신고 및 편의점 판매 안내" },
+  { id: 3, name: "삼성동 수거함", address: "서울 강남구 삼성동 16-1", type: "소형가전 전용", lat: 37.5140, lng: 127.0560, city: "서울", category: 'small', desc: "5개 미만 소형 가전 상시 무료 배출 가능" },
+  { id: 4, name: "강남구 재활용센터", address: "서울 강남구 봉은사로 401", type: "대형 재활용", lat: 37.5110, lng: 127.0460, city: "서울", category: 'recycle', desc: "가구/가전 기증 및 매입 상담 가능" },
+  { id: 5, name: "송파구청", address: "서울 송파구 올림픽로 326", type: "스티커/신고", lat: 37.5145, lng: 127.1058, city: "서울", category: 'office', desc: "스티커 판매소 위치 확인 가능" },
+  
+  // 대전 (확장 데이터)
+  { id: 7, name: "대전광역시청", address: "대전 서구 둔산로 100", type: "종합 민원", lat: 36.3504, lng: 127.3845, city: "대전", category: 'office', desc: "대전 전역 배출 종합 안내" },
+  { id: 8, name: "서구청 (대전)", address: "대전 서구 둔산서로 100", type: "스티커/신고", lat: 36.3467, lng: 127.3789, city: "대전", category: 'office', desc: "서구 관내 대형 폐기물 처리 거점" },
+  { id: 9, name: "유성구청", address: "대전 유성구 대학로 211", type: "스티커/신고", lat: 36.3622, lng: 127.3563, city: "대전", category: 'office', desc: "유성구 전역 배출 신고 접수" },
+  { id: 20, name: "중구청 (대전)", address: "대전 중구 중앙로 100", type: "스티커/신고", lat: 36.3248, lng: 127.4232, city: "대전", category: 'office', desc: "원도심 대형 폐기물 행정 처리" },
+  { id: 21, name: "동구청 (대전)", address: "대전 동구 동구청로 147", type: "스티커/신고", lat: 36.3339, lng: 127.4522, city: "대전", category: 'office', desc: "동구 지역 폐기물 스티커 판매" },
+  
+  { id: 22, name: "둔산1동 수거함", address: "대전 서구 둔산로 155", type: "소형가전 전용", lat: 36.3520, lng: 127.3950, city: "대전", category: 'small', desc: "주민센터 내 소형가전 무상 수거함" },
+  { id: 23, name: "궁동 소형 수거함", address: "대전 유성구 궁동 412", type: "소형가전 전용", lat: 36.3615, lng: 127.3480, city: "대전", category: 'small', desc: "대학가 인근 소형 가전 전용 배출처" },
+  { id: 24, name: "노은동 수거거점", address: "대전 유성구 노은동 547", type: "소형가전 전용", lat: 36.3720, lng: 127.3180, city: "대전", category: 'small', desc: "노은지구 상시 무상 배출 가능" },
+  { id: 25, name: "가양동 소형 수거함", address: "대전 동구 가양동 435", type: "소형가전 전용", lat: 36.3450, lng: 127.4420, city: "대전", category: 'small', desc: "동구 주택가 밀집 지역 수거함" },
+  
+  { id: 10, name: "서구 재활용센터", address: "대전 서구 문정로 48", type: "대형 재활용", lat: 36.3480, lng: 127.3910, city: "대전", category: 'recycle', desc: "중고 가구 수거 및 폐기 상담" },
+  { id: 26, name: "유성구 재활용센터", address: "대전 유성구 현충원로 347", type: "대형 재활용", lat: 36.3580, lng: 127.2950, city: "대전", category: 'recycle', desc: "유성구 지정 대형 폐기물 재활용 거점" },
+  { id: 27, name: "대덕구 재활용센터", address: "대전 대덕구 대화로 101", type: "대형 재활용", lat: 36.3650, lng: 127.4120, city: "대전", category: 'recycle', desc: "산업단지 인근 대형 품목 전문 처리" },
 
-// 지역별 지도 영역 설정
-const REGION_BOUNDS = {
-  '서울': {
-    minLat: 37.48,
-    maxLat: 37.53,
-    minLng: 127.01,
-    maxLng: 127.06
-  },
-  '대전': {
-    minLat: 36.31,
-    maxLat: 36.37,
-    minLng: 127.34,
-    maxLng: 127.43
-  }
-};
+  // 부산
+  { id: 11, name: "부산광역시청", address: "부산 연제구 중앙대로 1001", type: "스티커/신고", lat: 35.1795, lng: 129.0756, city: "부산", category: 'office', desc: "부산시 자원순환과 통합 안내" },
+  { id: 12, name: "해운대구청", address: "부산 해운대구 중동 1로 1", type: "스티커/신고", lat: 35.1631, lng: 129.1636, city: "부산", category: 'office', desc: "관광 특구 내 대형 폐기물 신속 처리 신고" },
+  { id: 13, name: "부산 재활용은행", address: "부산 동구 중앙대로 263", type: "대형 재활용", lat: 35.1205, lng: 129.0430, city: "부산", category: 'recycle', desc: "부산 최대 규모 중고 가구/가전 거점" },
+  
+  // 대구
+  { id: 14, name: "대구광역시청", address: "대구 중구 공평로 88", type: "스티커/신고", lat: 35.8711, lng: 128.6014, city: "대구", category: 'office', desc: "대구시 대형 폐기물 수수료 확인 및 신고" },
+  { id: 15, name: "수성구청 수거함", address: "대구 수성구 달구벌대로 2450", type: "소형가전 전용", lat: 35.8584, lng: 128.6300, city: "대구", category: 'small', desc: "수성구 지정 소형 가전 상시 배출" },
+
+  // 광주
+  { id: 16, name: "광주광역시청", address: "광주 서구 내방로 111", type: "스티커/신고", lat: 35.1601, lng: 126.8514, city: "광주", category: 'office', desc: "광주시 자원순환 통합 안내" },
+  { id: 17, name: "광산구 재활용센터", address: "광주 광산구 사암로 340", type: "대형 재활용", lat: 35.1750, lng: 126.8120, city: "광주", category: 'recycle', desc: "호남권 대형 가구/가전 재활용 거점" },
+];
 
 function Map() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [currentCity, setCurrentCity] = useState<'서울' | '대전'>('서울');
+  const [filterType, setFilterType] = useState<'all' | 'office' | 'small' | 'recycle'>('all');
+  const [showDayInfo, setShowDayInfo] = useState(false);
 
   const filteredLocations = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return locations.filter(l => l.city === currentCity);
+    let result = locations;
     
-    const results = locations.filter(loc => 
-      loc.name.toLowerCase().includes(query) || 
-      loc.address.toLowerCase().includes(query)
-    );
-
-    // 검색 결과가 다른 도시에 있다면 자동으로 도시 전환
-    if (results.length > 0 && results[0].city !== currentCity) {
-      setCurrentCity(results[0].city);
+    if (filterType !== 'all') {
+      result = result.filter(l => l.category === filterType);
     }
 
-    return results;
-  }, [searchQuery, currentCity]);
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      result = result.filter(loc => 
+        loc.name.toLowerCase().includes(query) || 
+        loc.address.toLowerCase().includes(query) ||
+        loc.city.toLowerCase().includes(query)
+      );
+    }
+    return result;
+  }, [searchQuery, filterType]);
 
   const selectedLocation = useMemo(() => 
-    locations.find(l => l.id === selectedId) || null
-  , [selectedId]);
+    locations.find(l => l.id === selectedId) || (filteredLocations.length > 0 ? filteredLocations[0] : null)
+  , [selectedId, filteredLocations]);
 
-  // 위경도를 지도 상의 % 좌표로 변환
-  const getPosition = (lat: number, lng: number) => {
-    const bounds = REGION_BOUNDS[currentCity];
-    const top = 100 - ((lat - bounds.minLat) / (bounds.maxLat - bounds.minLat) * 100);
-    const left = (lng - bounds.minLng) / (bounds.maxLng - bounds.minLng) * 100;
-    return { top: `${top}%`, left: `${left}%` };
-  };
+  const googleMapUrl = useMemo(() => {
+    if (!selectedLocation) return "https://maps.google.com/maps?q=36.5,127.5&z=7&output=embed";
+    return `https://maps.google.com/maps?q=${selectedLocation.lat},${selectedLocation.lng}&z=16&output=embed`;
+  }, [selectedLocation]);
 
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-blue-500/30">
       <Navbar />
 
       <main className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <h1 className="text-4xl font-black mb-4">우리 동네 수거함 지도</h1>
-              <p className="text-slate-400">서울 강남권과 대전 지역의 수거 위치를 확인하실 수 있습니다.</p>
+              <h1 className="text-4xl font-black mb-4">전국 수거 거점 지도</h1>
+              <p className="text-slate-400">구글 지도를 통해 대전 전역 및 전국 주요 장소를 확인하세요.</p>
             </div>
-            <div className="relative w-full md:w-72">
+            <div className="relative w-full md:w-96">
               <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors ${searchQuery ? 'text-blue-500' : 'text-slate-500'}`} size={18} />
               <input 
                 type="text" 
-                placeholder="동네 이름 검색 (예: 대전, 강남, 둔산)"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm outline-none focus:border-blue-500/50 transition-all focus:bg-white/10"
+                placeholder="동네 이름 검색 (예: 둔산동, 유성, 강남)"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-blue-500/50 transition-all focus:bg-white/10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSelectedId(null);
+                }}
               />
             </div>
           </div>
 
-          {/* Region Switcher */}
-          <div className="flex gap-2 mb-6">
-            {(['서울', '대전'] as const).map((city) => (
-              <button
-                key={city}
-                onClick={() => {
-                  setCurrentCity(city);
-                  setSearchQuery('');
-                  setSelectedId(null);
-                }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${currentCity === city ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}
-              >
-                {city} 지역
-              </button>
-            ))}
+          {/* Quick Filter Tabs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            <button onClick={() => setFilterType(filterType === 'office' ? 'all' : 'office')} className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${filterType === 'office' ? 'bg-blue-600 border-blue-500 shadow-lg shadow-blue-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+              <Building2 size={20} />
+              <span className="font-bold text-sm">동사무소</span>
+            </button>
+            <button onClick={() => setFilterType(filterType === 'small' ? 'all' : 'small')} className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${filterType === 'small' ? 'bg-green-600 border-green-500 shadow-lg shadow-green-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+              <Recycle size={20} />
+              <span className="font-bold text-sm">소형가전</span>
+            </button>
+            <button onClick={() => setFilterType(filterType === 'recycle' ? 'all' : 'recycle')} className={`p-4 rounded-2xl border transition-all flex items-center gap-3 ${filterType === 'recycle' ? 'bg-purple-600 border-purple-500 shadow-lg shadow-purple-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+              <Store size={20} />
+              <span className="font-bold text-sm">재활용센터</span>
+            </button>
+            <button onClick={() => setShowDayInfo(true)} className="p-4 rounded-2xl border bg-white/5 border-white/5 hover:bg-white/10 transition-all flex items-center gap-3 text-slate-400">
+              <Calendar size={20} />
+              <span className="font-bold text-sm">배출 가이드</span>
+            </button>
           </div>
 
-          {/* Custom Interactive Map Canvas */}
-          <div className="w-full aspect-video bg-slate-900 rounded-3xl border border-white/10 mb-12 relative overflow-hidden shadow-2xl bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
-            
-            {/* Region Label */}
-            <div className="absolute top-6 left-6 flex items-center gap-3 z-10">
-              <div className="glass px-4 py-2 rounded-xl text-[10px] font-bold text-slate-300 flex items-center gap-2 border-blue-500/20">
-                <MapIcon size={14} className="text-blue-500" />
-                {currentCity} 지역 지도 활성화됨
-              </div>
-            </div>
-
-            {/* Map Pins */}
-            <div className="absolute inset-10">
-              {filteredLocations.map((loc) => {
-                const pos = getPosition(loc.lat, loc.lng);
-                const isSelected = selectedId === loc.id;
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Map Area */}
+            <div className="lg:col-span-3">
+              <div className="w-full aspect-square md:aspect-[16/9] bg-slate-900 rounded-3xl border border-white/10 relative overflow-hidden shadow-2xl">
+                <iframe 
+                  key={selectedLocation?.id || 'base'}
+                  title="Google Maps"
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0" 
+                  src={googleMapUrl}
+                  style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%)' }}
+                  allowFullScreen
+                ></iframe>
                 
-                return (
-                  <div 
-                    key={loc.id}
-                    className="absolute transition-all duration-700 ease-in-out"
-                    style={{ top: pos.top, left: pos.left, transform: 'translate(-50%, -50%)' }}
-                  >
-                    <button 
-                      onClick={() => setSelectedId(loc.id)}
-                      className={`relative group flex flex-col items-center animate-in zoom-in-50 duration-500`}
-                    >
-                      <div className={`absolute bottom-full mb-2 whitespace-nowrap glass px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${isSelected ? 'opacity-100 translate-y-0 text-blue-400' : 'opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 text-slate-300'}`}>
-                        {loc.name}
+                {selectedLocation && (
+                  <div className="absolute bottom-6 left-6 right-6 glass p-6 rounded-3xl border-blue-500/30 animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg ${selectedLocation.category === 'office' ? 'bg-blue-600' : (selectedLocation.category === 'small' ? 'bg-green-600' : 'bg-purple-600')}`}>
+                          <MapPin size={24} />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-xl text-white">{selectedLocation.name}</h4>
+                          <p className="text-sm text-slate-400">{selectedLocation.address}</p>
+                        </div>
                       </div>
-                      
-                      <div className={`transition-all duration-300 rounded-full flex items-center justify-center ${
-                        isSelected 
-                          ? 'w-10 h-10 bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-110 z-30' 
-                          : 'w-8 h-8 bg-[#0f172a] border-2 border-blue-500/50 text-blue-500 hover:scale-110 hover:bg-blue-500/10 z-20'
-                      }`}>
-                        <MapPin size={isSelected ? 20 : 16} fill={isSelected ? "currentColor" : "none"} />
+                      <div className="flex gap-2">
+                        <a 
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedLocation.address)}`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+                        >
+                          <Navigation size={18} /> 길찾기
+                        </a>
                       </div>
-                      
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
-                      )}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Selected Item Floating Card */}
-            {selectedLocation && (
-              <div className="absolute bottom-6 left-6 right-6 glass p-5 rounded-2xl border-blue-500/30 animate-in slide-in-from-bottom-4 duration-500 z-40">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
-                      {selectedLocation.type.includes('가전') ? <Recycle size={24} /> : <Building2 size={24} />}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-lg">{selectedLocation.name}</h4>
-                        <span className="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-bold">운영중</span>
-                      </div>
-                      <p className="text-xs text-slate-400">{selectedLocation.address}</p>
+                    <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-2">
+                      <Info size={14} className="text-blue-400" />
+                      <p className="text-xs text-slate-400">{selectedLocation.desc}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setSelectedId(null)}
-                      className="p-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-white transition-all"
-                    >
-                      닫기
-                    </button>
-                    <a 
-                      href={`https://www.google.com/maps/search/${encodeURIComponent(selectedLocation.address)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-blue-600 px-5 py-2.5 rounded-xl text-white font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 text-sm"
-                    >
-                      길찾기 <ExternalLink size={16} />
-                    </a>
-                  </div>
-                </div>
+                )}
               </div>
-            )}
-          </div>
-
-          {/* List of Locations */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">
-                {searchQuery ? `'${searchQuery}' 주변 수거 장소` : `${currentCity} 지역 수거 장소 목록`} 
-              </h3>
-              <span className="text-xs font-bold text-slate-500 bg-white/5 px-3 py-1 rounded-full">{filteredLocations.length}곳 발견</span>
             </div>
-            
-            {filteredLocations.length > 0 ? (
-              filteredLocations.map((loc) => (
+
+            {/* List Area */}
+            <div className="space-y-4 max-h-[600px] lg:max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              <h3 className="text-lg font-bold mb-4 flex items-center justify-between">
+                <span>장소 목록</span>
+                <span className="text-xs bg-white/5 px-2 py-1 rounded-md text-slate-500">{filteredLocations.length}곳</span>
+              </h3>
+              
+              {filteredLocations.map((loc) => (
                 <div 
                   key={loc.id} 
                   onClick={() => setSelectedId(loc.id)}
-                  className={`bento-card cursor-pointer transition-all duration-300 border-white/5 ${
-                    selectedId === loc.id 
-                      ? 'border-blue-500/50 bg-blue-500/10 scale-[1.01] shadow-xl shadow-blue-500/5' 
-                      : 'hover:border-white/20 hover:bg-white/5'
-                  }`}
+                  className={`p-5 rounded-2xl border transition-all cursor-pointer group ${selectedId === loc.id ? 'bg-blue-600/10 border-blue-500/50' : 'bg-white/5 border-white/5 hover:border-white/20'}`}
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 ${
-                        selectedId === loc.id ? 'bg-blue-500 text-white' : 'bg-white/5 text-blue-500'
-                      }`}>
-                        <Navigation size={20} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className={`font-bold text-lg transition-colors ${selectedId === loc.id ? 'text-white' : 'text-slate-200'}`}>{loc.name}</h4>
-                          {selectedId === loc.id && <CheckCircle2 size={14} className="text-blue-500 animate-in zoom-in" />}
-                        </div>
-                        <p className="text-sm text-slate-400 mb-2">{loc.address}</p>
-                        <div className="flex items-center gap-3 text-xs">
-                          <span className="text-slate-500 flex items-center gap-1"><Info size={12} /> {loc.type}</span>
-                          <span className="text-slate-500 flex items-center gap-1"><MapPin size={12} /> {loc.distance}</span>
-                        </div>
-                      </div>
+                  <div className="flex items-start gap-4">
+                    <div className={`mt-1 p-2 rounded-lg ${loc.category === 'office' ? 'text-blue-400 bg-blue-400/10' : (loc.category === 'small' ? 'text-green-400 bg-green-400/10' : 'text-purple-400 bg-purple-400/10')}`}>
+                      {loc.category === 'small' ? <Recycle size={18} /> : (loc.category === 'recycle' ? <Store size={18} /> : <Building2 size={18} />)}
                     </div>
-                    <div className="flex items-center gap-3 self-end md:self-auto">
-                       <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${selectedId === loc.id ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-500'}`}>
-                         {selectedId === loc.id ? '지도에서 확인 중' : '위치 선택'}
-                       </span>
+                    <div>
+                      <h5 className="font-bold text-sm text-slate-200 group-hover:text-white transition-colors">{loc.name}</h5>
+                      <p className="text-[11px] text-slate-500 mt-1 line-clamp-1">{loc.address}</p>
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-24 glass rounded-3xl border-white/5 border-dashed">
-                <Search size={40} className="mx-auto text-slate-700 mb-4" />
-                <p className="text-slate-400 font-bold">검색 결과가 없습니다.</p>
-                <p className="text-xs text-slate-600 mt-2">다른 지역이나 장소명을 입력해 보세요.</p>
-              </div>
-            )}
+              ))}
+
+              {filteredLocations.length === 0 && (
+                <div className="text-center py-20 text-slate-600">
+                  <Search size={32} className="mx-auto mb-3 opacity-20" />
+                  <p className="text-sm">검색 결과가 없습니다.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
+
+      {/* Disposal Info Modal */}
+      {showDayInfo && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowDayInfo(false)}></div>
+          <div className="bg-[#0f172a] w-full max-w-3xl rounded-[2.5rem] border border-white/10 p-10 relative z-10 animate-in zoom-in-95 duration-300">
+            <div className="flex items-center justify-between mb-10">
+              <h2 className="text-3xl font-black text-white flex items-center gap-3">
+                <Smartphone className="text-blue-500" size={32} /> 대형 폐기물 스마트 배출
+              </h2>
+              <button onClick={() => setShowDayInfo(false)} className="bg-white/5 p-3 rounded-full text-slate-400 hover:text-white transition-all"><X size={24} /></button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-8">
+                <div className="flex items-start gap-5">
+                  <div className="w-14 h-14 bg-blue-600/20 text-blue-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/10"><CreditCard size={28} /></div>
+                  <div>
+                    <h4 className="font-bold text-xl text-white mb-2">편의점 스티커 구매</h4>
+                    <p className="text-sm text-slate-400 leading-relaxed">거주지 주변 지정 편의점에서 종량제 봉투처럼 스티커를 바로 구매할 수 있습니다.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-5">
+                  <div className="w-14 h-14 bg-green-600/20 text-green-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-green-500/10"><Smartphone size={28} /></div>
+                  <div>
+                    <h4 className="font-bold text-xl text-white mb-2">전용 앱 (빼기 / 여기로)</h4>
+                    <p className="text-sm text-slate-400 leading-relaxed">사진만 찍어 올리면 결제부터 수거 예약까지 스마트폰으로 간편하게 해결됩니다.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white/5 p-8 rounded-[2rem] border border-white/10 relative overflow-hidden">
+                <div className="absolute -right-8 -top-8 opacity-5 text-blue-500"><Search size={160} /></div>
+                <h4 className="font-bold text-lg mb-6 text-blue-400">온라인 신고 4단계</h4>
+                <div className="space-y-5 relative z-10">
+                  {["구청 홈페이지 접속", "대형폐기물 신고 선택", "정보 입력 및 결제", "신고번호 기재 후 배출"].map((t, i) => (
+                    <div key={i} className="flex items-center gap-4 text-sm text-slate-300">
+                      <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">{i+1}</span>
+                      <p className="font-medium">{t}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="mt-10 text-center text-xs text-slate-500">※ 정확한 배출 요일은 각 지자체 조례에 따라 다를 수 있습니다.</p>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
