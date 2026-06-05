@@ -4,7 +4,7 @@ import {
   BookOpen, 
   Users, 
   MessageSquare, 
-  Truck, 
+  Truck as TruckIcon, 
   Zap,
   Search,
   Camera,
@@ -147,7 +147,7 @@ function Home() {
             </Link>
 
             {/* Success Counter */}
-            <div className="md:col-span-1 md:row-span-2 bento-card flex flex-col justify-between text-center">
+            <Link to="/success" className="md:col-span-1 md:row-span-2 bento-card flex flex-col justify-between text-center hover:border-green-500/30 transition-colors">
               <div className="flex justify-center mb-4">
                 <Users className="text-purple-400" size={32} />
               </div>
@@ -159,7 +159,7 @@ function Home() {
                 <div className="h-full w-[85%] bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
               </div>
               <p className="text-[10px] text-slate-500 mt-2">오늘도 12명이 비용 없이 처리했습니다.</p>
-            </div>
+            </Link>
 
             {/* Community Highlight */}
             <Link to="/community" id="community" className="md:col-span-1 md:row-span-1 bento-card flex flex-col justify-center text-left hover:border-green-500/30 transition-colors">
@@ -171,13 +171,13 @@ function Home() {
             </Link>
 
             {/* Request Status */}
-            <div className="md:col-span-2 md:row-span-1 bento-card flex items-center justify-between group overflow-hidden">
+            <Link to="/truck" className="md:col-span-2 md:row-span-1 bento-card flex items-center justify-between group overflow-hidden hover:border-green-500/30 transition-colors">
               <div className="z-10 text-left">
                 <h3 className="text-xl font-bold">전문 수거 차량 호출</h3>
                 <p className="text-slate-400 text-sm">인증된 파트너 업체가 안전하게 수거해 드립니다.</p>
               </div>
-              <Truck className="text-white/5 group-hover:text-green-500/20 transition-colors" size={120} style={{ marginRight: '-40px' }} />
-            </div>
+              <TruckIcon className="text-white/5 group-hover:text-green-500/20 transition-colors" size={120} style={{ marginRight: '-40px' }} />
+            </Link>
 
             {/* Camera Quote */}
             <Link to="/estimate" className="md:col-span-1 md:row-span-1 bento-card flex items-center justify-center group text-center cursor-pointer hover:bg-green-500/5 hover:border-green-500/30 transition-colors">
