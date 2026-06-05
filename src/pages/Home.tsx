@@ -30,7 +30,7 @@ function Home() {
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <Link to="/guide" className="hover:text-white transition-colors">폐기물 가이드</Link>
             <Link to="/map" className="hover:text-white transition-colors">수거 맵</Link>
-            <a href="#community" className="hover:text-white transition-colors">나눔 커뮤니티</a>
+            <Link to="/community" className="hover:text-white transition-colors">나눔 커뮤니티</Link>
           </div>
           <div className="flex items-center gap-4">
             <a href="tel:1599-0903" className="hidden sm:flex items-center gap-2 text-sm font-bold text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
@@ -162,13 +162,13 @@ function Home() {
             </div>
 
             {/* Community Highlight */}
-            <div id="community" className="md:col-span-1 md:row-span-1 bento-card flex flex-col justify-center text-left">
+            <Link to="/community" id="community" className="md:col-span-1 md:row-span-1 bento-card flex flex-col justify-center text-left hover:border-green-500/30 transition-colors">
               <div className="flex items-center gap-2 text-green-400 mb-2">
                 <MessageSquare size={16} />
                 <span className="text-xs font-bold uppercase tracking-tighter">실시간 나눔</span>
               </div>
               <p className="text-sm font-medium line-clamp-2">"방금 강남구에서 3인용 소파 무료 나눔이 올라왔어요!"</p>
-            </div>
+            </Link>
 
             {/* Request Status */}
             <div className="md:col-span-2 md:row-span-1 bento-card flex items-center justify-between group overflow-hidden">
@@ -180,7 +180,7 @@ function Home() {
             </div>
 
             {/* Camera Quote */}
-            <div className="md:col-span-1 md:row-span-1 bento-card flex items-center justify-center group text-center cursor-pointer hover:bg-green-500/5">
+            <Link to="/estimate" className="md:col-span-1 md:row-span-1 bento-card flex items-center justify-center group text-center cursor-pointer hover:bg-green-500/5 hover:border-green-500/30 transition-colors">
               <div>
                 <div className="text-green-500 mb-2 flex justify-center">
                   <Camera size={24} />
@@ -188,7 +188,7 @@ function Home() {
                 <h4 className="text-sm font-bold">사진 견적</h4>
                 <p className="text-[10px] text-slate-500">찍어서 올리면<br />무료 여부 판독</p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </main>
