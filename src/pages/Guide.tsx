@@ -126,9 +126,12 @@ function Guide() {
                       </div>
                       <div className="flex items-center justify-between md:justify-end gap-6">
                         <span className="text-green-500 font-bold">{item.price}</span>
-                        <button className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium">
+                        <Link 
+                          to={`/guide/${encodeURIComponent(item.name)}`}
+                          className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium"
+                        >
                           상세보기
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ))}
