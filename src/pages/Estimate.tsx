@@ -1,53 +1,125 @@
+import { useState } from 'react';
 import { 
   Trash2, 
-  ArrowLeft, 
   Camera, 
   Upload,
   Info,
   CheckCircle2,
-  Zap
+  Zap,
+  Loader2,
+  ArrowRight,
+  RefreshCcw,
+  DollarSign
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function Estimate() {
+  const [status, setStatus] = useState<'idle' | 'analyzing' | 'result'>('idle');
+
+  const handleUpload = () => {
+    setStatus('analyzing');
+    setTimeout(() => {
+      setStatus('result');
+    }, 3000);
+  };
+
+  const reset = () => setStatus('idle');
+
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-green-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-green-500">가이드</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> 홈으로 돌아가기
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-12">
-            <h1 className="text-4xl font-black mb-4">사진 견적 서비스</h1>
+            <h1 className="text-4xl font-black mb-4">AI 사진 견적 서비스</h1>
             <p className="text-slate-400">버리려는 물건의 사진을 찍어 올려주시면 AI가 배출 비용을 예측해 드립니다.</p>
           </div>
 
-          {/* Upload Area */}
-          <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border-2 border-dashed border-white/10 mb-12 flex flex-col items-center justify-center group cursor-pointer hover:border-green-500/50 hover:bg-green-500/5 transition-all">
-            <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Camera size={40} />
+          {status === 'idle' && (
+            <div 
+              onClick={handleUpload}
+              className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border-2 border-dashed border-white/10 mb-12 flex flex-col items-center justify-center group cursor-pointer hover:border-green-500/50 hover:bg-green-500/5 transition-all"
+            >
+              <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Camera size={40} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">사진 업로드 또는 촬영</h3>
+              <p className="text-slate-500 text-sm mb-6">최대한 선명하게 전체 모습이 나오도록 찍어주세요.</p>
+              <button className="bg-white text-black font-bold px-8 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-200 transition-all">
+                <Upload size={18} /> 파일 선택하기
+              </button>
             </div>
-            <h3 className="text-xl font-bold mb-2">사진 업로드 또는 촬영</h3>
-            <p className="text-slate-500 text-sm mb-6">최대한 선명하게 전체 모습이 나오도록 찍어주세요.</p>
-            <button className="bg-white text-black font-bold px-8 py-3 rounded-xl flex items-center gap-2 hover:bg-slate-200 transition-all">
-              <Upload size={18} /> 파일 선택하기
-            </button>
-          </div>
+          )}
+
+          {status === 'analyzing' && (
+            <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border border-white/10 mb-12 flex flex-col items-center justify-center">
+              <Loader2 size={48} className="text-green-500 animate-spin mb-6" />
+              <h3 className="text-2xl font-bold mb-2">이미지 분석 중...</h3>
+              <p className="text-slate-500">인공지능이 품목과 규격을 판독하고 있습니다.</p>
+              
+              <div className="mt-8 w-64 h-2 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-green-500 animate-[loading_3s_ease-in-out]"></div>
+              </div>
+            </div>
+          )}
+
+          {status === 'result' && (
+            <div className="mb-12 animate-in zoom-in-95 duration-500">
+              <div className="glass p-8 md:p-12 rounded-3xl border-green-500/30 overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-8 opacity-5">
+                  <Zap size={200} />
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 text-green-500 font-bold mb-6">
+                    <CheckCircle2 size={24} />
+                    <span>분석 완료!</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">판독 결과</h4>
+                      <div className="space-y-6">
+                        <div>
+                          <p className="text-slate-400 text-sm mb-1">식별 품목</p>
+                          <p className="text-3xl font-black">3인용 가죽 소파</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400 text-sm mb-1">예상 배출 수수료</p>
+                          <p className="text-3xl font-black text-green-500">₩10,000</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                      <h4 className="font-bold mb-4 flex items-center gap-2">
+                        <Info size={18} className="text-blue-400" />
+                        추천 배출 방법
+                      </h4>
+                      <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                        해당 품목은 대형 폐기물로 분류됩니다. 상태가 양호하다면 무상 나눔을 권장드리며, 폐기 시에는 지자체 신고 후 배출이 필요합니다.
+                      </p>
+                      <div className="space-y-3">
+                        <Link to="/truck" className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all">
+                          방문 수거 예약하기 <ArrowRight size={18} />
+                        </Link>
+                        <button 
+                          onClick={reset}
+                          className="w-full glass hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm"
+                        >
+                          <RefreshCcw size={16} /> 다른 사진 찍기
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Guide Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
@@ -110,16 +182,7 @@ function Estimate() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-green-500" />
-            <span>클린 가이드 견적</span>
-          </div>
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 모든 견적 데이터는 자체 AI 모델로 분석됩니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

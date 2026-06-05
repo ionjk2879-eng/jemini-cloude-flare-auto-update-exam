@@ -1,13 +1,13 @@
 import { 
-  Trash2, 
-  ArrowLeft, 
   MapPin, 
   Navigation,
   Info,
   Building2,
-  Recycle
+  Recycle,
+  Search
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const locations = [
   {
@@ -36,29 +36,24 @@ const locations = [
 function Map() {
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-blue-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-blue-500">가이드</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> 홈으로 돌아가기
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-12">
-            <h1 className="text-4xl font-black mb-4">우리 동네 수거함 지도</h1>
-            <p className="text-slate-400">가장 가까운 폐가전 수거함과 동사무소 위치를 안내해 드립니다.</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <h1 className="text-4xl font-black mb-4">우리 동네 수거함 지도</h1>
+              <p className="text-slate-400">가장 가까운 폐가전 수거함과 동사무소 위치를 안내해 드립니다.</p>
+            </div>
+            <div className="relative w-full md:w-72">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+              <input 
+                type="text" 
+                placeholder="동네 이름으로 검색"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm outline-none focus:border-blue-500/50 transition-all"
+              />
+            </div>
           </div>
 
           {/* Map Placeholder */}
@@ -124,16 +119,7 @@ function Map() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-blue-500" />
-            <span>클린 가이드 맵</span>
-          </div>
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 지도 데이터는 공공데이터포털 자료를 활용합니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

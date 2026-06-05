@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { 
   Trash2, 
-  ArrowLeft, 
   MessageSquare, 
   Plus,
   Heart,
   MessageCircle,
   Share2,
-  MapPin
+  MapPin,
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
-const posts = [
+const initialPosts = [
   {
     id: 1,
     author: "클린이",
@@ -47,34 +51,41 @@ const posts = [
 ];
 
 function Community() {
+  const [posts, setPosts] = useState(initialPosts);
+  const [activeTab, setActiveTab] = useState("전체");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [likedPosts, setLikedPosts] = useState<number[]>([]);
+
+  const handleLike = (id: number) => {
+    if (likedPosts.includes(id)) {
+      setLikedPosts(likedPosts.filter(p => p !== id));
+      setPosts(posts.map(p => p.id === id ? { ...p, likes: p.likes - 1 } : p));
+    } else {
+      setLikedPosts([...likedPosts, id]);
+      setPosts(posts.map(p => p.id === id ? { ...p, likes: p.likes + 1 } : p));
+    }
+  };
+
+  const filteredPosts = activeTab === "전체" 
+    ? posts 
+    : posts.filter(post => post.tags.includes(activeTab) || (activeTab === "가전" && post.tags.includes("가전")) || (activeTab === "가구" && post.tags.includes("가구")));
+
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-purple-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-purple-500">커뮤니티</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> 홈으로 돌아가기
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="flex items-end justify-between mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <h1 className="text-4xl font-black mb-4">실시간 나눔 커뮤니티</h1>
               <p className="text-slate-400">버리기 아까운 물건, 필요한 이웃에게 나눠주세요.</p>
             </div>
-            <button className="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-2xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-2xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.2)] self-start md:self-auto"
+            >
               <Plus size={20} /> 나눔 글쓰기
             </button>
           </div>
@@ -84,8 +95,9 @@ function Community() {
             {["전체", "가구", "가전", "생활용품", "기타"].map((tab) => (
               <button 
                 key={tab}
+                onClick={() => setActiveTab(tab)}
                 className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap ${
-                  tab === "전체" ? "bg-white text-black" : "bg-white/5 text-slate-400 hover:bg-white/10"
+                  activeTab === tab ? "bg-white text-black" : "bg-white/5 text-slate-400 hover:bg-white/10"
                 }`}
               >
                 {tab}
@@ -95,7 +107,7 @@ function Community() {
 
           {/* Posts List */}
           <div className="space-y-6">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <div key={post.id} className="bento-card hover:border-purple-500/30 transition-colors group">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -128,8 +140,13 @@ function Community() {
                 </div>
 
                 <div className="flex items-center gap-6 pt-4 border-t border-white/5">
-                  <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-pink-500 transition-colors">
-                    <Heart size={18} /> {post.likes}
+                  <button 
+                    onClick={() => handleLike(post.id)}
+                    className={`flex items-center gap-2 text-sm transition-colors ${
+                      likedPosts.includes(post.id) ? 'text-pink-500' : 'text-slate-400 hover:text-pink-500'
+                    }`}
+                  >
+                    <Heart size={18} fill={likedPosts.includes(post.id) ? 'currentColor' : 'none'} /> {post.likes}
                   </button>
                   <button className="flex items-center gap-2 text-sm text-slate-400 hover:text-purple-500 transition-colors">
                     <MessageCircle size={18} /> {post.comments}
@@ -146,16 +163,50 @@ function Community() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-purple-500" />
-            <span>클린 가이드 나눔</span>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
+          <div className="bg-[#0f172a] w-full max-w-xl rounded-3xl border border-white/10 p-8 relative z-10 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-white">나눔 글쓰기</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-500 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase">제목</label>
+                <input 
+                  type="text" 
+                  placeholder="나눔할 물건을 짧게 소개해주세요"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-purple-500/50 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase">내용</label>
+                <textarea 
+                  rows={4}
+                  placeholder="물건의 상태, 거래 희망 장소 등을 적어주세요"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-purple-500/50 transition-all resize-none"
+                ></textarea>
+              </div>
+              
+              <div className="flex gap-4">
+                <button className="flex-1 glass py-4 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-white/10 transition-all">
+                  <ImageIcon size={18} /> 사진 추가
+                </button>
+                <button className="flex-1 bg-purple-600 hover:bg-purple-500 py-4 rounded-xl text-sm font-bold transition-all shadow-lg">
+                  등록하기
+                </button>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 커뮤니티는 이웃 간의 따뜻한 나눔을 응원합니다.</p>
         </div>
-      </footer>
+      )}
+
+      <Footer />
     </div>
   );
 }

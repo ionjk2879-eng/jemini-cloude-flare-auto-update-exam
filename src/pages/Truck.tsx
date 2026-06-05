@@ -1,6 +1,4 @@
 import { 
-  Trash2, 
-  ArrowLeft, 
   Truck as TruckIcon, 
   Calendar,
   Clock,
@@ -9,27 +7,13 @@ import {
   CheckCircle2,
   ChevronRight
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function Truck() {
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-green-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-green-500">가이드</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> 홈으로 돌아가기
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
@@ -123,16 +107,7 @@ function Truck() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-green-500" />
-            <span>클린 가이드 수거</span>
-          </div>
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 모든 파트너 업체는 화물운송종사 자격증을 보유하고 있습니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

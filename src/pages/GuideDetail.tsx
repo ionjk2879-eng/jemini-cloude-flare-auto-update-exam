@@ -1,7 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { 
-  Trash2, 
-  ArrowLeft, 
   Info, 
   AlertTriangle, 
   CheckCircle, 
@@ -9,6 +7,8 @@ import {
   HelpCircle,
   Camera
 } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const itemDetails: Record<string, any> = {
   "장롱 (1자 기준)": {
@@ -77,20 +77,7 @@ function GuideDetail() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-green-500">가이드</span></span>
-          </Link>
-          <Link to="/guide" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            <ArrowLeft size={16} /> 가이드 목록으로
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
@@ -161,20 +148,16 @@ function GuideDetail() {
                 <h3 className="text-xl font-bold mb-2">헷갈리시나요?</h3>
                 <p className="text-slate-400 text-sm">사진을 찍으시면 정확한 규격을 AI가 분석해드립니다.</p>
               </div>
-              <button className="flex items-center gap-2 bg-white text-black font-bold px-6 py-3 rounded-xl hover:bg-slate-200 transition-all shrink-0">
+              <Link to="/estimate" className="flex items-center gap-2 bg-white text-black font-bold px-6 py-3 rounded-xl hover:bg-slate-200 transition-all shrink-0">
                 <Camera size={20} />
                 AI 분석 시작
-              </button>
+              </Link>
             </div>
           </div>
         </div>
       </main>
 
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50 mt-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 모든 정보는 지자체별 조례에 따라 다를 수 있습니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { 
   Trash2, 
   MapPin, 
@@ -11,43 +12,54 @@ import {
   Phone,
   CheckCircle2,
   Gift,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Sparkles
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+
+const faqs = [
+  {
+    question: "무상수거 제외 대상은 어떤 것들이 있나요?",
+    answer: "원형이 훼손된 가전(컴프레셔 탈취 등), 빌트인 가전, 그리고 가구류는 무상 수거 대상이 아닙니다. 가구는 반드시 지자체 스티커를 부착해야 합니다."
+  },
+  {
+    question: "비가 오는 날에도 배출해도 되나요?",
+    answer: "가전제품은 전자회로 부식 위험이 있어 가급적 맑은 날 배출을 권장합니다. 부득이한 경우 비닐 등으로 덮어 배출해 주세요."
+  },
+  {
+    question: "스티커를 잘못 샀는데 환불이 가능한가요?",
+    answer: "사용하지 않은 스티커(필증)는 구매하신 곳(주민센터, 편의점 등)이나 지자체 홈페이지를 통해 취소 및 환불이 가능합니다."
+  }
+];
+
+const tips = [
+  "대형 가전은 1599-0903으로 예약하면 집 안까지 방문 수거해드려요.",
+  "소형 가전은 5개를 모으면 무상 방문 수거 대상이 됩니다.",
+  "상태가 좋은 가구는 폐기 전에 나눔 커뮤니티에 먼저 올려보세요.",
+  "거울이 달린 장롱은 깨지지 않도록 테이프로 'X'자 표시를 하면 안전합니다."
+];
 
 function Home() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [currentTip, setCurrentTip] = useState('');
+
+  useEffect(() => {
+    setCurrentTip(tips[Math.floor(Math.random() * tips.length)]);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-green-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-green-500">가이드</span></span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-            <Link to="/guide" className="hover:text-white transition-colors">폐기물 가이드</Link>
-            <Link to="/map" className="hover:text-white transition-colors">수거 맵</Link>
-            <Link to="/community" className="hover:text-white transition-colors">나눔 커뮤니티</Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <a href="tel:1599-0903" className="hidden sm:flex items-center gap-2 text-sm font-bold text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">
-              <Phone size={14} /> 1599-0903
-            </a>
-            <button className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95">
-              지금 신청하기
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
-          <section className="text-center mb-24">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/20 bg-green-500/10 text-green-500 text-xs font-bold mb-6 animate-fade-in">
+          <section className="text-center mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/20 bg-green-500/10 text-green-500 text-xs font-bold mb-6">
               <Zap size={14} />
               <span>스티커 사기 전에 확인하세요! 무료 배출 가이드</span>
             </div>
@@ -71,9 +83,22 @@ function Home() {
             </div>
           </section>
 
+          {/* Today's Tip */}
+          <div className="max-w-3xl mx-auto mb-24">
+            <div className="glass p-4 rounded-2xl flex items-center gap-4 border-green-500/20 bg-green-500/5">
+              <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shrink-0 text-white">
+                <Sparkles size={20} />
+              </div>
+              <p className="text-sm md:text-base font-medium">
+                <span className="text-green-500 font-bold mr-2">오늘의 팁:</span>
+                {currentTip}
+              </p>
+            </div>
+          </div>
+
           {/* Quick Info Grid */}
           <div id="free-guide" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-            <div className="bento-card bg-gradient-to-br from-green-500/10 to-transparent">
+            <div className="bento-card bg-gradient-to-br from-green-500/10 to-transparent animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
               <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center mb-4 text-white">
                 <Phone size={20} />
               </div>
@@ -87,7 +112,7 @@ function Home() {
               </ul>
             </div>
 
-            <div className="bento-card">
+            <div className="bento-card animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
               <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center mb-4 text-white">
                 <Zap size={20} />
               </div>
@@ -101,7 +126,7 @@ function Home() {
               </ul>
             </div>
 
-            <div className="bento-card">
+            <div className="bento-card animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
               <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center mb-4 text-white">
                 <Gift size={20} />
               </div>
@@ -117,7 +142,7 @@ function Home() {
           </div>
 
           {/* Bento Grid Content */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[180px]">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[180px] mb-24">
             {/* Disposal Guide Detail */}
             <Link to="/guide" className="md:col-span-2 md:row-span-2 bento-card flex flex-col justify-between group overflow-hidden text-left">
               <div className="z-10">
@@ -190,32 +215,33 @@ function Home() {
               </div>
             </Link>
           </div>
+
+          {/* FAQ Section */}
+          <section className="max-w-3xl mx-auto mb-24">
+            <h2 className="text-3xl font-bold mb-8 text-center">자주 묻는 질문</h2>
+            <div className="space-y-4">
+              {faqs.map((faq, idx) => (
+                <div key={idx} className="glass rounded-2xl overflow-hidden border border-white/5 transition-all">
+                  <button 
+                    onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                    className="w-full px-6 py-5 flex items-center justify-between hover:bg-white/5 transition-colors"
+                  >
+                    <span className="font-bold text-left">{faq.question}</span>
+                    {openFaq === idx ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </button>
+                  {openFaq === idx && (
+                    <div className="px-6 pb-5 text-slate-400 text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-green-500" />
-            <span>클린 가이드 랩</span>
-          </div>
-          <div className="flex gap-8 text-sm text-slate-500">
-            <a href="#" className="hover:text-white transition-colors">이용약관</a>
-            <a href="#" className="hover:text-white transition-colors">개인정보처리방침</a>
-            <a href="#" className="hover:text-white transition-colors">업체 제휴 문의</a>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-[10px] text-slate-500">무상방문수거 문의</p>
-              <p className="text-sm font-bold text-green-500">1599-0903</p>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto mt-8 pt-8 border-t border-white/5 text-center">
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 모든 정보는 e-순환거버넌스 및 지자체 공공 데이터를 기반으로 제공됩니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

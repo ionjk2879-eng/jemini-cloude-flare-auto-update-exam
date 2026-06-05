@@ -1,15 +1,18 @@
+import { useState } from 'react';
 import { 
   Trash2, 
-  ArrowLeft, 
   Search, 
   CheckCircle2, 
   AlertCircle,
   Package,
   Armchair,
   Tv,
-  Lightbulb
+  Lightbulb,
+  Info
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const guideCategories = [
   {
@@ -45,24 +48,18 @@ const guideCategories = [
 ];
 
 function Guide() {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredCategories = guideCategories.map(category => ({
+    ...category,
+    items: category.items.filter(item => 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  })).filter(category => category.items.length > 0);
+
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-green-500/30">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <Trash2 size={20} className="text-white" />
-            </div>
-            <span>클린 <span className="text-green-500">가이드</span></span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft size={16} /> 홈으로 돌아가기
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
@@ -79,6 +76,8 @@ function Guide() {
               type="text" 
               placeholder="무엇을 버리시나요? (예: 소파, 냉장고, 책상...)"
               className="w-full glass py-4 pl-12 pr-6 rounded-2xl outline-none border border-white/10 focus:border-green-500/50 transition-all text-lg"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -106,61 +105,62 @@ function Guide() {
 
           {/* Guide Sections */}
           <div className="space-y-8">
-            {guideCategories.map((category, idx) => (
-              <section key={idx} className="bento-card">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`w-10 h-10 ${category.color} rounded-xl flex items-center justify-center text-white`}>
-                    {category.icon}
-                  </div>
-                  <h2 className="text-2xl font-bold">{category.title}</h2>
-                </div>
-                
-                <div className="space-y-3">
-                  {category.items.map((item, itemIdx) => (
-                    <div key={itemIdx} className="bg-white/5 hover:bg-white/10 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors border border-white/5">
-                      <div>
-                        <h4 className="font-bold text-lg">{item.name}</h4>
-                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                          <Lightbulb size={12} className="text-yellow-500" /> {item.tip}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between md:justify-end gap-6">
-                        <span className="text-green-500 font-bold">{item.price}</span>
-                        <Link 
-                          to={`/guide/${encodeURIComponent(item.name)}`}
-                          className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium"
-                        >
-                          상세보기
-                        </Link>
-                      </div>
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((category, idx) => (
+                <section key={idx} className="bento-card">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className={`w-10 h-10 ${category.color} rounded-xl flex items-center justify-center text-white`}>
+                      {category.icon}
                     </div>
-                  ))}
+                    <h2 className="text-2xl font-bold">{category.title}</h2>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {category.items.map((item, itemIdx) => (
+                      <div key={itemIdx} className="bg-white/5 hover:bg-white/10 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors border border-white/5">
+                        <div>
+                          <h4 className="font-bold text-lg">{item.name}</h4>
+                          <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                            <Lightbulb size={12} className="text-yellow-500" /> {item.tip}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between md:justify-end gap-6">
+                          <span className="text-green-500 font-bold">{item.price}</span>
+                          <Link 
+                            to={`/guide/${encodeURIComponent(item.name)}`}
+                            className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium"
+                          >
+                            상세보기
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))
+            ) : (
+              <div className="text-center py-20 glass rounded-3xl">
+                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
+                  <Info size={32} />
                 </div>
-              </section>
-            ))}
+                <h3 className="text-xl font-bold mb-2">검색 결과가 없습니다</h3>
+                <p className="text-slate-500">다른 품목으로 검색하시거나 사진 상담을 이용해보세요.</p>
+              </div>
+            )}
           </div>
 
           {/* Contact Section */}
           <div className="mt-12 p-8 rounded-3xl bg-gradient-to-br from-green-500/20 to-blue-500/20 border border-white/10 text-center">
             <h3 className="text-xl font-bold mb-2 text-white">찾으시는 품목이 없나요?</h3>
             <p className="text-slate-400 text-sm mb-6">사진을 찍어 올리시면 인공지능이 배출 방법을 알려드려요.</p>
-            <button className="bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-slate-200 transition-all">
+            <Link to="/estimate" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-xl hover:bg-slate-200 transition-all">
               사진 상담 시작하기
-            </button>
+            </Link>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-slate-950/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-2 font-bold text-lg opacity-80 text-left">
-            <Trash2 size={24} className="text-green-500" />
-            <span>클린 가이드 랩</span>
-          </div>
-          <p className="text-xs text-slate-600">© 2026 클린 가이드. 모든 정보는 지자체별 조례에 따라 다를 수 있습니다.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
