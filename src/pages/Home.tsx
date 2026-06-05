@@ -29,7 +29,7 @@ function Home() {
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
             <Link to="/guide" className="hover:text-white transition-colors">폐기물 가이드</Link>
-            <a href="#disposal-map" className="hover:text-white transition-colors">수거 맵</a>
+            <Link to="/map" className="hover:text-white transition-colors">수거 맵</Link>
             <a href="#community" className="hover:text-white transition-colors">나눔 커뮤니티</a>
           </div>
           <div className="flex items-center gap-4">
@@ -136,7 +136,7 @@ function Home() {
             </Link>
 
             {/* Map Service */}
-            <div id="disposal-map" className="md:col-span-2 md:row-span-1 bento-card flex items-center gap-6 group">
+            <Link to="/map" className="md:col-span-2 md:row-span-1 bento-card flex items-center gap-6 group text-left">
               <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform text-blue-500">
                 <MapPin />
               </div>
@@ -144,7 +144,7 @@ function Home() {
                 <h3 className="text-xl font-bold">우리 동네 수거함 지도</h3>
                 <p className="text-slate-400 text-sm">가장 가까운 폐가전 수거함과 동사무소를 찾아보세요.</p>
               </div>
-            </div>
+            </Link>
 
             {/* Success Counter */}
             <div className="md:col-span-1 md:row-span-2 bento-card flex flex-col justify-between text-center">
