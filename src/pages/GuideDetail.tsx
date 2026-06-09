@@ -1,11 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { 
   Info, 
   AlertTriangle, 
   CheckCircle, 
   DollarSign,
   HelpCircle,
-  Camera
+  Camera,
+  Phone,
+  Globe,
+  Search
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -61,11 +65,64 @@ const itemDetails: Record<string, any> = {
       "원형이 훼손된 제품(핵심 부품 탈취 등)은 수거 불가할 수 있음",
       "빌트인 가전은 직접 분리해두어야 함"
     ]
+  },
+  "면도날/칼날": {
+    category: "생활/위험류",
+    price: "무료",
+    method: "종량제 봉투 (일반쓰레기)",
+    description: "사용하신 면도날이나 칼날은 수거 기사님이 다치지 않도록 안전하게 포장하여 버려야 하는 위험 품목입니다.",
+    steps: [
+      "신문지나 두꺼운 종이로 날카로운 부분을 여러 번 감싸기",
+      "테이프로 꼼꼼히 고정하여 내용물이 빠지지 않게 하기",
+      "종량제 봉투(일반쓰레기)의 가운데 부분에 넣어 배출",
+      "봉투 겉면에 '날카로움 주의'라고 기재하면 더욱 안전합니다"
+    ],
+    warnings: [
+      "절대로 그냥 버리지 마세요 (수거 기사님 부상 위험)",
+      "캔이나 플라스틱 통에 모아서 버리는 것도 좋은 방법입니다",
+      "재활용(금속류)으로 분류하지 마시고 일반쓰레기로 배출하세요"
+    ]
+  },
+  "폐건전지": {
+    category: "생활/위험류",
+    price: "무료",
+    method: "전용 수거함 배출",
+    description: "건전지는 토양 오염과 화재 위험이 있어 반드시 분리배출해야 하는 품목입니다.",
+    steps: [
+      "다 쓴 건전지를 한곳에 모으기",
+      "가까운 주민센터, 아파트 단지 내 전용 수거함 확인",
+      "대형마트나 지하철역 등에 설치된 폐건전지 수거함 이용",
+      "수거함에 투입"
+    ],
+    warnings: [
+      "일반쓰레기와 섞어서 버리면 화재의 위험이 있습니다",
+      "수은전지, 리튬전지 등 모든 종류의 건전지가 대상입니다",
+      "녹슬거나 누액이 발생한 건전지는 비닐에 싸서 배출하세요"
+    ]
+  },
+  "폐의약품": {
+    category: "생활/위험류",
+    price: "무료",
+    method: "약국/보건소 수거함 이용",
+    description: "유통기한이 지났거나 먹다 남은 약은 생태계 교란을 막기 위해 지정된 곳에 버려야 합니다.",
+    steps: [
+      "알약은 포장지(PTP)를 제거하고 내용물만 봉투에 모으기",
+      "가루약은 포장지를 뜯지 말고 그대로 모으기",
+      "물약(시럽)은 한 병에 모을 수 있는 만큼 모으기",
+      "약국, 보건소, 또는 주민센터 내 폐의약품 전용 수거함에 제출"
+    ],
+    warnings: [
+      "변기나 하수구에 버리면 수질 오염의 원인이 됩니다",
+      "일반쓰레기로 버리면 토양에 흡수되어 생태계에 악영향을 줍니다",
+      "포장지(상자)는 종이류로 분리배출 하세요"
+    ]
   }
 };
 
 function GuideDetail() {
   const { itemName } = useParams();
+  const [district, setDistrict] = useState('');
+
   const detail = itemDetails[itemName || ""] || {
     category: "기타",
     price: "별도 문의",
@@ -73,6 +130,12 @@ function GuideDetail() {
     description: "해당 품목의 상세 정보가 아직 등록되지 않았습니다.",
     steps: ["지자체 홈페이지 확인", "주민센터 문의"],
     warnings: ["정확한 배출 방법은 관할 구역에 따라 다를 수 있습니다."]
+  };
+
+  const handleDistrictSearch = () => {
+    if (!district.trim()) return;
+    const searchQuery = `${district} 대형폐기물 인터넷 신고`;
+    window.open(`https://search.naver.com/search.naver?query=${encodeURIComponent(searchQuery)}`, '_blank');
   };
 
   return (
@@ -100,6 +163,35 @@ function GuideDetail() {
           </div>
 
           <div className="space-y-6">
+            {/* Local District Quick Search */}
+            <section className="glass p-8 rounded-3xl border-green-500/20 bg-green-500/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                    <Search className="text-green-500" size={20} />
+                    우리 동네 배출 사이트 찾기
+                  </h3>
+                  <p className="text-sm text-slate-400">거주하시는 구(예: 강남구, 영등포구)를 입력하시면 바로 연결해드려요.</p>
+                </div>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="예: 강남구"
+                    className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl outline-none focus:border-green-500/50 transition-all w-full md:w-40 text-slate-200"
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleDistrictSearch()}
+                  />
+                  <button 
+                    onClick={handleDistrictSearch}
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-xl transition-all shrink-0 shadow-lg shadow-green-500/20"
+                  >
+                    이동
+                  </button>
+                </div>
+              </div>
+            </section>
+
             {/* Description */}
             <section className="glass p-8 rounded-3xl">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -126,6 +218,30 @@ function GuideDetail() {
                     <p className="text-slate-300">{step}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Local Gov Inquiry Tip */}
+              <div className="mt-8 space-y-4">
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold mb-3">
+                    <Phone size={18} />
+                    전화 문의
+                  </div>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    관할 <strong className="text-slate-200 font-semibold">구청 청소행정과</strong> 또는 <strong className="text-slate-200 font-semibold">주민센터</strong>로 전화하시면 가장 정확하게 안내받으실 수 있습니다.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold mb-3">
+                    <Globe size={18} />
+                    인터넷 문의
+                  </div>
+                  <p className="text-sm text-slate-400 leading-relaxed mb-2">
+                    지자체 홈페이지의 <strong className="text-slate-200 font-semibold">'대형폐기물 인터넷 신고'</strong> 게시판이나 <strong className="text-slate-200 font-semibold">'국민신문고'</strong>를 통해 온라인으로도 문의 및 민원 신청이 가능합니다.
+                  </p>
+                  <p className="text-[10px] text-slate-500 italic">* 네이버/구글에 'OO구 대형폐기물'을 검색하시면 해당 지역 사이트로 바로 이동할 수 있습니다.</p>
+                </div>
               </div>
             </section>
 

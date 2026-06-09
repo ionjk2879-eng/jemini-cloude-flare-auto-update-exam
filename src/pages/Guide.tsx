@@ -44,6 +44,16 @@ const guideCategories = [
       { name: "피아노", price: "별도문의", tip: "전문 수거 업체 이용이 안전합니다" },
       { name: "거울/유리", price: "2,000원 ~", tip: "신문지로 감싸서 깨지지 않게 주의" },
     ]
+  },
+  {
+    title: "생활/위험류",
+    icon: <AlertCircle size={24} />,
+    color: "bg-red-500",
+    items: [
+      { name: "면도날/칼날", price: "무료", tip: "종이에 싸서 일반 쓰레기로" },
+      { name: "폐건전지", price: "무료", tip: "전용 수거함(주민센터 등) 이용" },
+      { name: "폐의약품", price: "무료", tip: "약국 또는 보건소 수거함 이용" },
+    ]
   }
 ];
 
@@ -117,18 +127,21 @@ function Guide() {
                   
                   <div className="space-y-3">
                     {category.items.map((item, itemIdx) => (
-                      <div key={itemIdx} className="bg-white/5 hover:bg-white/10 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors border border-white/5">
-                        <div>
-                          <h4 className="font-bold text-lg">{item.name}</h4>
+                      <div key={itemIdx} className="bg-white/5 hover:bg-white/10 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors border border-white/5 group">
+                        <Link 
+                          to={`/guide/${encodeURIComponent(item.name)}`}
+                          className="flex-1"
+                        >
+                          <h4 className="font-bold text-lg group-hover:text-green-400 transition-colors">{item.name}</h4>
                           <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
                             <Lightbulb size={12} className="text-yellow-500" /> {item.tip}
                           </p>
-                        </div>
+                        </Link>
                         <div className="flex items-center justify-between md:justify-end gap-6">
                           <span className="text-green-500 font-bold">{item.price}</span>
                           <Link 
                             to={`/guide/${encodeURIComponent(item.name)}`}
-                            className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium"
+                            className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all font-medium whitespace-nowrap"
                           >
                             상세보기
                           </Link>

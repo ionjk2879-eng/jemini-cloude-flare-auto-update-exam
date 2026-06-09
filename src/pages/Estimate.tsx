@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Trash2, 
   Camera, 
@@ -17,15 +17,92 @@ import Footer from '../components/Footer';
 
 function Estimate() {
   const [status, setStatus] = useState<'idle' | 'analyzing' | 'result'>('idle');
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUpload = () => {
-    setStatus('analyzing');
-    setTimeout(() => {
-      setStatus('result');
-    }, 3000);
+  const [analysisResult, setAnalysisResult] = useState({
+    name: '3인용 가죽 소파',
+    price: '10,000',
+    category: '가구류',
+    sizeTag: '대형 폐기물',
+    guideItem: '소파 (3인용)',
+    description: '해당 품목은 대형 폐기물로 분류됩니다. 상태가 양호하다면 무상 나눔을 권장드리며, 폐기 시에는 지자체 신고 후 배출이 필요합니다.'
+  });
+
+  const mockResults = [
+    {
+      name: '3인용 가죽 소파',
+      price: '10,000',
+      category: '가구류',
+      sizeTag: '대형 폐기물',
+      guideItem: '소파 (3인용)',
+      description: '부피가 큰 대형 가구로 분류됩니다. 지자체 대형폐기물 스티커 부착이 필수입니다.'
+    },
+    {
+      name: '대형 양문형 냉장고',
+      price: '무료',
+      category: '가전류',
+      sizeTag: '대형 폐기물 (무상수거)',
+      guideItem: '대형 가전 (냉장고 등)',
+      description: '대형 가전은 폐가전 무상방문수거 서비스를 통해 비용 없이 배출할 수 있습니다.'
+    },
+    {
+      name: '목재 장롱 (1자)',
+      price: '3,000',
+      category: '가구류',
+      sizeTag: '중형 폐기물',
+      guideItem: '장롱 (1자 기준)',
+      description: '크기에 따라 비용이 산정되는 중대형 가구입니다. 분해 배출 시 수거가 더 원활합니다.'
+    }
+  ];
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
-  const reset = () => setStatus('idle');
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+        startAnalysis(file);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const startAnalysis = async (file: File) => {
+    setStatus('analyzing');
+    
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('http://localhost:5001/api/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('분석 서버 응답 오류');
+      }
+
+      const result = await response.json();
+      setAnalysisResult(result);
+      setStatus('result');
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      alert('이미지 분석 중 오류가 발생했습니다. 서버 상태를 확인해주세요.');
+      setStatus('idle');
+    }
+  };
+
+  const reset = () => {
+    setStatus('idle');
+    setPreviewImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   return (
     <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans selection:bg-green-500/30">
@@ -39,9 +116,17 @@ function Estimate() {
             <p className="text-slate-400">버리려는 물건의 사진을 찍어 올려주시면 AI가 배출 비용을 예측해 드립니다.</p>
           </div>
 
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+
           {status === 'idle' && (
             <div 
-              onClick={handleUpload}
+              onClick={triggerFileInput}
               className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border-2 border-dashed border-white/10 mb-12 flex flex-col items-center justify-center group cursor-pointer hover:border-green-500/50 hover:bg-green-500/5 transition-all"
             >
               <div className="w-20 h-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -56,13 +141,22 @@ function Estimate() {
           )}
 
           {status === 'analyzing' && (
-            <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border border-white/10 mb-12 flex flex-col items-center justify-center">
-              <Loader2 size={48} className="text-green-500 animate-spin mb-6" />
-              <h3 className="text-2xl font-bold mb-2">이미지 분석 중...</h3>
-              <p className="text-slate-500">인공지능이 품목과 규격을 판독하고 있습니다.</p>
-              
-              <div className="mt-8 w-64 h-2 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 animate-[loading_3s_ease-in-out]"></div>
+            <div className="w-full aspect-square md:aspect-video bg-slate-900 rounded-3xl border border-white/10 mb-12 flex flex-col md:flex-row items-center justify-center gap-12 p-8">
+              {previewImage && (
+                <div className="w-full md:w-1/2 h-full rounded-2xl overflow-hidden border border-white/10 relative">
+                  <img src={previewImage} alt="Preview" className="w-full h-full object-cover opacity-50" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 size={48} className="text-green-500 animate-spin" />
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                <h3 className="text-2xl font-bold mb-2">이미지 분석 중...</h3>
+                <p className="text-slate-500">인공지능이 품목과 규격을 판독하고 있습니다.</p>
+                
+                <div className="mt-8 w-64 h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500 animate-[loading_3s_ease-in-out]"></div>
+                </div>
               </div>
             </div>
           )}
@@ -75,41 +169,57 @@ function Estimate() {
                 </div>
                 
                 <div className="relative z-10">
-                  <div className="flex items-center gap-3 text-green-500 font-bold mb-6">
+                  <div className="flex items-center gap-3 text-green-500 font-bold mb-8">
                     <CheckCircle2 size={24} />
                     <span>분석 완료!</span>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">판독 결과</h4>
+                    <div className="space-y-8">
+                      {previewImage && (
+                        <div className="aspect-video rounded-2xl overflow-hidden border border-white/10">
+                          <img src={previewImage} alt="Result" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      
                       <div className="space-y-6">
                         <div>
                           <p className="text-slate-400 text-sm mb-1">식별 품목</p>
-                          <p className="text-3xl font-black">3인용 가죽 소파</p>
+                          <p className="text-3xl font-black">{analysisResult.name}</p>
+                          <div className="inline-block mt-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-lg text-xs font-bold text-green-500">
+                            {analysisResult.sizeTag}
+                          </div>
                         </div>
                         <div>
                           <p className="text-slate-400 text-sm mb-1">예상 배출 수수료</p>
-                          <p className="text-3xl font-black text-green-500">₩10,000</p>
+                          <p className="text-3xl font-black text-green-500">
+                            {analysisResult.price === '무료' ? '무료' : `₩${analysisResult.price}`}
+                          </p>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                    <div className="bg-white/5 p-8 rounded-2xl border border-white/10 flex flex-col">
                       <h4 className="font-bold mb-4 flex items-center gap-2">
                         <Info size={18} className="text-blue-400" />
                         추천 배출 방법
                       </h4>
-                      <p className="text-sm text-slate-400 leading-relaxed mb-6">
-                        해당 품목은 대형 폐기물로 분류됩니다. 상태가 양호하다면 무상 나눔을 권장드리며, 폐기 시에는 지자체 신고 후 배출이 필요합니다.
+                      <p className="text-slate-400 leading-relaxed mb-8 flex-1">
+                        {analysisResult.description}
                       </p>
                       <div className="space-y-3">
-                        <Link to="/truck" className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all">
-                          방문 수거 예약하기 <ArrowRight size={18} />
+                        <Link 
+                          to={`/guide/${encodeURIComponent(analysisResult.guideItem)}`}
+                          className="w-full bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all hover:bg-slate-200"
+                        >
+                          가이드에서 상세보기 <ArrowRight size={18} />
+                        </Link>
+                        <Link to="/truck" className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition-all">
+                          방문 수거 예약하기
                         </Link>
                         <button 
                           onClick={reset}
-                          className="w-full glass hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm"
+                          className="w-full glass hover:bg-white/10 py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm mt-4"
                         >
                           <RefreshCcw size={16} /> 다른 사진 찍기
                         </button>
