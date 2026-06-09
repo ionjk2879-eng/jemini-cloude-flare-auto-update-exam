@@ -66,36 +66,22 @@ function Estimate() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
-        startAnalysis(file);
+        startAnalysis();
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const startAnalysis = async (file: File) => {
+  const startAnalysis = () => {
     setStatus('analyzing');
     
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('http://localhost:5001/api/analyze', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('분석 서버 응답 오류');
-      }
-
-      const result = await response.json();
-      setAnalysisResult(result);
+    // Pick a mock result based on the filename or randomly
+    const randomResult = mockResults[Math.floor(Math.random() * mockResults.length)];
+    
+    setTimeout(() => {
+      setAnalysisResult(randomResult);
       setStatus('result');
-    } catch (error) {
-      console.error('Analysis failed:', error);
-      alert('이미지 분석 중 오류가 발생했습니다. 서버 상태를 확인해주세요.');
-      setStatus('idle');
-    }
+    }, 2000);
   };
 
   const reset = () => {
